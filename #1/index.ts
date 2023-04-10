@@ -6,7 +6,7 @@ const createBitGetter = (array: Uint8Array) => {
             throw new Error("Index can't be more than 7");
         }
 
-        if( index < 0 || index >= array.length) {
+        if(index < 0 || index >= array.length) {
             throw new Error("The value doesn't exist on this index. Try another one");
         }
     }
