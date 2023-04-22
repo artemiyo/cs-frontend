@@ -83,7 +83,7 @@ class DoublyLinkedList implements Iterable<any> {
   }
 
 
-  next(): ReturnType<Iterator["next"]> {
+  next(): IteratorResult<any> {
     if (this.current && this.current.val) {
       let result = { done: false, value: this.current.val };
       this.current = this.current.next;
