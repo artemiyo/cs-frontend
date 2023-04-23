@@ -9,7 +9,7 @@ class ListNode {
   }
 }
 
-class DoublyLinkedList implements Iterable<any> {
+export class DoublyLinkedList implements Iterable<any> {
   head: ListNode | null;
   tail: ListNode | null;
   length: number;

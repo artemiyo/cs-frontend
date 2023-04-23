@@ -29,10 +29,12 @@ class Structure {
     let byteOffset = 0;
     let element: SchemaItem;
 
-    for (let i = 1; i < this.schema.length; i++) {
+    for (let i = 0; i < this.schema.length; i++) {
       const schemaItem = this.schema[i];
       const prevSchemaItem = this.schema[i - 1];
-      byteOffset += (prevSchemaItem[2] ?? 1) * this.bytesPerElement;
+      if (i > 0) {
+        byteOffset += (prevSchemaItem[2] ?? 1) * this.bytesPerElement;
+      }
 
       if (schemaItem[0] === key) {
         element = schemaItem;
@@ -59,7 +61,7 @@ class Structure {
       for (
         let i = byteOffset;
         i < byteOffset + symbolCount * this.bytesPerElement;
-        i += 2
+        i++
       ) {
         result += String.fromCharCode(this.dataView.getUint16(i));
       }
@@ -107,7 +109,7 @@ const jackBlack = new Structure([
 ]);
 
 // jackBlack.set("age", 42);
-jackBlack.set("lastName", "Black");
+jackBlack.set("lastName", "");
 jackBlack.set("age", 55);
 //
 console.log(jackBlack.get("lastName")); // 'Black'
