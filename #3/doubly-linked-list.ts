@@ -57,10 +57,11 @@ export class DoublyLinkedList implements Iterable<any> {
       this.tail = null;
     } else {
       this.head = oldHead!.next;
-      this.head!.prev = null;
-      oldHead!.next = null;
+      this.head.prev = null;
+      oldHead.next = null;
     }
     this.length--;
+    return oldHead;
   }
 
   unshift(val: any) {
@@ -82,7 +83,6 @@ export class DoublyLinkedList implements Iterable<any> {
     return this;
   }
 
-
   next(): IteratorResult<any> {
     if (this.current && this.current.val) {
       let result = { done: false, value: this.current.val };
@@ -103,7 +103,3 @@ linkedList.add(5);
 linkedList.pop();
 linkedList.unshift("world");
 linkedList.unshift("hello");
-
-for (let nodeValue of linkedList) {
-  console.log(nodeValue);
-}
