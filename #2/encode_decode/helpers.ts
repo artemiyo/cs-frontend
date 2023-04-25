@@ -30,7 +30,7 @@ export const getOffsets = (normalizedSchema: NormalizedSchema[]) => {
   const byteSize = getByteSize(normalizedSchema);
   const offsets = [];
 
-  loop: for (let i = 0, index = 0; i < normalizedSchema.length; i++) {
+  loop: for (let i = 0, index = 0; i < normalizedSchema.length; index++) {
     let offset = 0;
 
     while (offset + normalizedSchema[i].size <= byteSize) {
