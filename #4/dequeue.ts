@@ -1,50 +1,25 @@
+import { DoublyLinkedList } from "../#3/doubly-linked-list";
+
 class Queue {
-  queArray: number[];
-  front: number;
-  rear: number;
-  nItems: number;
+  linkedList: DoublyLinkedList;
   constructor() {
-    this.queArray = [];
-    this.front = 0;
-    this.rear = -1;
-    this.nItems = 0;
+    this.linkedList = new DoublyLinkedList();
   }
 
   push(value: number) {
-    this.queArray[++this.rear] = value;
-    this.nItems++;
+    this.linkedList.add(value);
   }
 
   shift() {
-    if (this.nItems === 0) {
-      throw new Error("Queue is empty!");
-    }
-    let temp = this.queArray[this.front];
-    this.queArray = this.queArray.slice(1, this.nItems);
-    this.rear--;
-    this.nItems--;
-
-    return temp;
+    return this.linkedList.shift();
   }
 
   unshift(value: number) {
-    this.queArray = [value, ...this.queArray];
-    this.nItems++;
-    this.rear++;
-
-    return this.queArray[this.front];
+    this.linkedList.unshift(value);
   }
 
   pop() {
-    if (this.nItems === 0) {
-      throw new Error("Queue is empty!");
-    }
-
-    let temp = this.queArray[this.rear];
-    this.queArray = this.queArray.slice(0, this.rear);
-    this.rear--;
-    this.nItems--;
-    return temp;
+    return this.linkedList.pop();
   }
 }
 

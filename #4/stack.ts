@@ -12,12 +12,15 @@ class Stack {
   }
 
   push(value: number) {
+    if (this.length > this.size) {
+      throw new Error("Exception");
+    }
     this.array[this.length++] = value;
   }
 
   pop() {
     if (!this.length) {
-      throw new Error("Exception");
+      throw new Error("The stack is empty!");
     }
     return this.array[--this.length];
   }
