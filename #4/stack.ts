@@ -1,4 +1,4 @@
-class Stack {
+class TypedArrayStack {
   array: Int32Array;
   length: number;
 
@@ -26,7 +26,7 @@ class Stack {
   }
 }
 
-const stack = new Stack(Int32Array, 10);
+const stack = new TypedArrayStack(Int32Array, 10);
 
 stack.push(10);
 stack.push(11);
