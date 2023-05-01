@@ -1,5 +1,5 @@
 interface ITypedArrayConstructor<T> {
-  new (...args: number[]): T;
+  new (length: number): T;
 }
 
 type TypedArray =
@@ -10,14 +10,14 @@ type TypedArray =
   | Int16Array
   | Int32Array;
 
-class Vector <T = TypedArray>{
+class Vector<T = TypedArray> {
   #arrayLength: number;
-  #typedArray: T;
+  #typedArray: TypedArray;
   #capacity: number;
-  readonly #typedArrayConstructor: ITypedArrayConstructor<T>;
+  readonly #typedArrayConstructor: ITypedArrayConstructor<TypedArray>;
 
   constructor(
-    readonly TypedArrayConstructor: ITypedArrayConstructor<T>,
+    readonly TypedArrayConstructor: ITypedArrayConstructor<TypedArray>,
     readonly size: { capacity: number }
   ) {
     this.#arrayLength = 0;
@@ -87,13 +87,9 @@ class Vector <T = TypedArray>{
   get length() {
     return this.#arrayLength;
   }
-
-  get arrayValues() {
-    return this.#typedArray;
-  }
 }
 
-const uint8Vector = new Vector(Uint8Array, { capacity: 5 });
+const uint8Vector = new Vector(Uint8Array, { capacity: 100 });
 
 uint8Vector.push(100); // 1
 uint8Vector.push(20, 10); // 3
@@ -103,4 +99,3 @@ console.log(uint8Vector.shift()); // 100
 
 uint8Vector.unshift(1); // 2
 console.log(uint8Vector.length); // 2
-console.log(uint8Vector.arrayValues);
