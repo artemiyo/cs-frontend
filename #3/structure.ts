@@ -1,3 +1,5 @@
+// TODO: Подумать над другой реализацией
+
 type SchemaItemType = "utf16" | "u16";
 type SchemaItem = [string, SchemaItemType, number?];
 type StructureSchema = SchemaItem[];
