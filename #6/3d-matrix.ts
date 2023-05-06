@@ -21,7 +21,7 @@ class Matrix3D {
   }
 
   #getIndex({ x, y, z }: Coordinates) {
-    return z * this.#x * this.#y + y * this.#x + x;
+    return (y * this.#x + x) * this.#z + z;
   }
 }
 
