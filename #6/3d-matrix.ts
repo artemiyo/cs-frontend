@@ -1,31 +1,60 @@
-type Coordinates = { x: number; y: number; z: number };
-
 class Matrix3D {
-  readonly #x: number;
-  readonly #y: number;
-  readonly #z: number;
-  readonly array: Uint32Array;
-  constructor(config: Coordinates) {
-    this.#x = config.x;
-    this.#y = config.y;
-    this.#z = config.z;
-    this.array = new Uint32Array(config.x * config.y * config.z);
+  #buffer;
+  #xSize;
+  #ySize;
+  #zSize;
+
+  constructor({ xSize, ySize, zSize }) {
+    this.#xSize = xSize;
+    this.#ySize = ySize;
+    this.#zSize = zSize;
+    this.#buffer = new Array(xSize * ySize * zSize);
   }
 
-  set(coordinates: Coordinates, value: any) {
-    return (this.array[this.#getIndex(coordinates)] = value);
+  getBuffer() {
+    return this.#buffer;
   }
 
-  get(coordinates: Coordinates) {
-    return this.array[this.#getIndex(coordinates)];
+  #getIndex({ x, y, z }) {
+    return (z * this.#ySize + y) * this.#xSize + x;
   }
 
-  #getIndex({ x, y, z }: Coordinates) {
-    return (y * this.#x + x) * this.#z + z;
+  get({ x, y, z }) {
+    return this.#buffer[this.#getIndex({ x, y, z })];
+  }
+
+  set({ x, y, z }, value) {
+    this.#buffer[this.#getIndex({ x, y, z })] = value;
   }
 }
 
-const matrix3D = new Matrix3D({ x: 10, y: 10, z: 10 });
+const m = new Matrix3D({ xSize: 2, ySize: 3, zSize: 4 });
+m.set({ x: 0, y: 0, z: 0 }, 1);
+m.set({ x: 1, y: 0, z: 0 }, 2);
+m.set({ x: 0, y: 1, z: 0 }, 3);
+m.set({ x: 1, y: 1, z: 0 }, 4);
+m.set({ x: 0, y: 2, z: 0 }, 5);
+m.set({ x: 1, y: 2, z: 0 }, 6);
 
-matrix3D.set({ x: 1, y: 3, z: 2 }, 10);
-matrix3D.get({ x: 1, y: 3, z: 2 }); // 10
+m.set({ x: 0, y: 0, z: 1 }, 7);
+m.set({ x: 1, y: 0, z: 1 }, 8);
+m.set({ x: 0, y: 1, z: 1 }, 9);
+m.set({ x: 1, y: 1, z: 1 }, 10);
+m.set({ x: 0, y: 2, z: 1 }, 11);
+m.set({ x: 1, y: 2, z: 1 }, 12);
+
+m.set({ x: 0, y: 0, z: 2 }, 13);
+m.set({ x: 1, y: 0, z: 2 }, 14);
+m.set({ x: 0, y: 1, z: 2 }, 15);
+m.set({ x: 1, y: 1, z: 2 }, 16);
+m.set({ x: 0, y: 2, z: 2 }, 17);
+m.set({ x: 1, y: 2, z: 2 }, 18);
+
+m.set({ x: 0, y: 0, z: 3 }, 19);
+m.set({ x: 1, y: 0, z: 3 }, 20);
+m.set({ x: 0, y: 1, z: 3 }, 21);
+m.set({ x: 1, y: 1, z: 3 }, 22);
+m.set({ x: 0, y: 2, z: 3 }, 23);
+m.set({ x: 1, y: 2, z: 3 }, 24);
+
+console.log(m.getBuffer());
