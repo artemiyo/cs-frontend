@@ -1,94 +1,132 @@
+type Comparator<T> = (a: T, B: T) => number;
+
 interface BinaryTreeNodeOptions<T> {
-  parent?: BinaryTreeNode<T>;
-  leftChild?: BinaryTreeNode<T>;
-  rightChild?: BinaryTreeNode<T>;
+  comparator: Comparator<T>;
+
+  parent?: BinaryTreeNode<T> | null;
+  leftChild?: BinaryTreeNode<T> | null;
+  rightChild?: BinaryTreeNode<T> | null;
 }
 
 class BinaryTreeNode<T> {
   value: T;
+  comparator: Comparator<T>;
 
-  parent: BinaryTreeNode<T>;
-  leftChild: BinaryTreeNode<T>;
-  rightChild: BinaryTreeNode<T>;
+  parent: BinaryTreeNode<T> | null;
+  leftChild: BinaryTreeNode<T> | null;
+  rightChild: BinaryTreeNode<T> | null;
 
   constructor(
     value: T,
+
     {
+      comparator,
       parent = null,
       leftChild = null,
       rightChild = null,
-    }: BinaryTreeNodeOptions<T> = {}
+    }: BinaryTreeNodeOptions<T>
   ) {
     this.value = value;
+    this.comparator = comparator;
+
     this.parent = parent;
     this.leftChild = leftChild;
     this.rightChild = rightChild;
+  }
+
+  remove() {
+    if (this.parent == null) {
+      return;
+    }
+
+    if (this.parent.leftChild === this) {
+      this.parent.leftChild = null;
+    } else {
+      this.parent.rightChild = null;
+    }
+
+    this.parent = null;
+  }
+
+  setParent(parent: BinaryTreeNode<T> | null) {
+    this.remove();
+
+    if (parent == null) {
+      return;
+    }
+
+    this.parent = parent;
+
+    if (this.comparator(this.value, parent.value) > 0) {
+      parent.rightChild = this;
+    } else {
+      parent.leftChild = this;
+    }
+  }
+
+  setLeftChild(child: BinaryTreeNode<T> | null) {
+    if (child == null) {
+      this.leftChild = null;
+    } else {
+      child.setParent(this);
+    }
+  }
+
+  setRightChild(child: BinaryTreeNode<T> | null) {
+    if (child == null) {
+      this.rightChild = null;
+    } else {
+      child.setParent(this);
+    }
   }
 }
 
 class BST<T> {
   root: BinaryTreeNode<T> | null;
 
-  constructor(rootValue: T, protected comparator: (a: T, b: T) => number) {
-    this.root = new BinaryTreeNode<T>(rootValue);
+  constructor(rootValue: T, protected comparator: (a: T, B: T) => number) {
+    this.root = new BinaryTreeNode<T>(rootValue, { comparator });
   }
 
-  order(direction: "pre" | "post" | "in") {
+  preOrder() {
     return iterate(this.root);
 
     function* iterate(node: BinaryTreeNode<T> | null) {
-      if (node === null) {
+      if (node == null) {
         return;
       }
 
-      if (direction === "pre") {
-        yield node.value;
-        yield* iterate(node.leftChild);
-        yield* iterate(node.rightChild);
-      }
-
-      if (direction === "post") {
-        yield* iterate(node.leftChild);
-        yield* iterate(node.rightChild);
-        yield node.value;
-      }
-
-      if (direction === "in") {
-        yield* iterate(node.leftChild);
-        yield node.value;
-        yield* iterate(node.rightChild);
-      }
+      yield node.value;
+      yield* iterate(node.leftChild);
+      yield* iterate(node.rightChild);
     }
   }
 
-  add(value: T) {
-    const { comparator } = this;
-    recAdd(this.root);
+  postOrder() {
+    return iterate(this.root);
 
-    function recAdd(node: BinaryTreeNode<T> | null) {
-      if (node === null) {
+    function* iterate(node: BinaryTreeNode<T> | null) {
+      if (node == null) {
         return;
       }
 
-      const comp = comparator(value, node.value);
-      if (comp < 0) {
-        if (node.leftChild === null) {
-          node.leftChild = new BinaryTreeNode<T>(value, { parent: node });
-        } else {
-          recAdd(node.leftChild);
-        }
+      yield* iterate(node.leftChild);
+      yield* iterate(node.rightChild);
+      yield node.value;
+    }
+  }
 
+  inOrder() {
+    return iterate(this.root);
+
+    function* iterate(node: BinaryTreeNode<T> | null) {
+      if (node == null) {
         return;
       }
 
-      if (comp > 0) {
-        if (node.rightChild === null) {
-          node.rightChild = new BinaryTreeNode<T>(value, { parent: node });
-        } else {
-          recAdd(node.rightChild);
-        }
-        return;
-      }
+      yield* iterate(node.leftChild);
+      yield node.value;
+      yield* iterate(node.rightChild);
     }
   }
 
@@ -98,7 +136,7 @@ class BST<T> {
     return recFind(this.root);
 
     function recFind(node: BinaryTreeNode<T> | null) {
-      if (node === null) {
+      if (node == null) {
         return null;
       }
 
@@ -118,96 +156,140 @@ class BST<T> {
     }
   }
 
-  delete(value: T): BinaryTreeNode<T> | null {
-    const that = this;
-    const nodeToRemove = this.find(value);
+  remove(value: T): BinaryTreeNode<T> | null {
+    const that = this,
+      nodeToRemove = this.find(value);
 
-    if (nodeToRemove === null) {
+    if (nodeToRemove == null) {
       return null;
     }
 
     const nodeToReplace =
       max(nodeToRemove.leftChild) ?? min(nodeToRemove.rightChild);
 
-    if (nodeToReplace === null) {
+    if (nodeToReplace == null) {
       removeFromParent(nodeToRemove);
     } else {
-      removeFromParent(nodeToRemove);
-      nodeToReplace.parent = nodeToRemove.parent;
-      nodeToReplace.leftChild = nodeToRemove.leftChild;
-      nodeToReplace.rightChild = nodeToRemove.rightChild;
-      swapFromParent(nodeToRemove, nodeToReplace);
-    }
+      removeFromParent(nodeToReplace);
+      nodeToReplace.setParent(nodeToRemove.parent);
 
-    function min(node: BinaryTreeNode<T> | null) {
-      if (node === null) {
-        return;
+      if (nodeToRemove.parent == null) {
+        this.root = nodeToReplace;
       }
 
-      return node.leftChild === null ? node : min(node.leftChild);
+      if (nodeToRemove.leftChild != null) {
+        if (nodeToReplace.leftChild == null) {
+          nodeToReplace.setLeftChild(nodeToRemove.leftChild);
+        } else {
+          const leaf = min(nodeToReplace.leftChild);
+          leaf.setLeftChild(nodeToRemove.leftChild);
+        }
+      }
+
+      if (nodeToRemove.rightChild != null) {
+        if (nodeToReplace.rightChild == null) {
+          nodeToReplace.setRightChild(nodeToRemove.rightChild);
+        } else {
+          const leaf = max(nodeToReplace.rightChild);
+          leaf.setRightChild(nodeToRemove.rightChild);
+        }
+      }
+    }
+
+    return nodeToRemove;
+
+    function min(node: BinaryTreeNode<T> | null) {
+      if (node == null) {
+        return null;
+      }
+
+      return node.leftChild == null ? node : min(node.leftChild);
     }
 
     function max(node: BinaryTreeNode<T> | null) {
-      if (node === null) {
-        return;
+      if (node == null) {
+        return null;
       }
 
-      return node.rightChild === null ? node : max(node.rightChild);
+      return node.rightChild == null ? node : max(node.rightChild);
     }
 
     function removeFromParent(node: BinaryTreeNode<T> | null) {
-      if (node === null) {
+      if (node == null) {
         return;
       }
 
       const { parent } = node;
+      node.remove();
 
-      if (parent === null) {
+      if (parent == null) {
         that.root = null;
         return;
       }
-
-      if (parent.leftChild === node) {
-        parent.leftChild = null;
-      } else {
-        parent.rightChild = null;
-      }
     }
+  }
 
-    function swapFromParent(
-      from: BinaryTreeNode<T> | null,
-      to: BinaryTreeNode<T>
-    ) {
-      if (from === null) {
+  add(value: T) {
+    const { comparator } = this;
+
+    recAdd(this.root);
+
+    function recAdd(node: BinaryTreeNode<T> | null) {
+      if (node == null) {
         return;
       }
 
-      const { parent } = from;
+      const comp = comparator(value, node.value);
 
-      if (parent === null) {
-        that.root = to;
+      if (comp < 0) {
+        if (node.leftChild == null) {
+          node.leftChild = new BinaryTreeNode<T>(value, {
+            comparator,
+            parent: node,
+          });
+        } else {
+          recAdd(node.leftChild);
+        }
+
         return;
       }
 
-      if (parent.leftChild === from) {
-        parent.leftChild = to;
-      } else {
-        parent.rightChild = to;
+      if (comp > 0) {
+        if (node.rightChild == null) {
+          node.rightChild = new BinaryTreeNode<T>(value, {
+            comparator,
+            parent: node,
+          });
+        } else {
+          recAdd(node.rightChild);
+        }
+
+        return;
       }
     }
   }
 }
 
-const bst = new BST(10, (a, b) => a - b);
-bst.add(8);
-bst.add(4);
-bst.add(9);
+const t = new BST(15, (a, b) => a - b);
 
-bst.add(12);
-bst.add(11);
-bst.add(17);
+t.add(13);
+t.add(9);
+t.add(7);
+t.add(3);
 
-// console.log(...bst.order("pre"));
-// console.log(...bst.order("post"));
-// console.log(...bst.order("in"));
-console.log(bst.find(11));
+t.add(11);
+t.add(10);
+
+t.add(18);
+t.add(23);
+t.add(20);
+t.add(21);
+t.add(22);
+
+console.log(...t.preOrder());
+
+t.remove(18);
+t.remove(20);
+t.remove(21);
+
+console.log(...t.preOrder());
