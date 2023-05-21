@@ -2,6 +2,7 @@ class Matrix {
   private xSize: number;
   private ySize: number;
   private buffer: number[];
+
   constructor({ xSize, ySize }) {
     this.xSize = xSize;
     this.ySize = ySize;
@@ -59,6 +60,7 @@ class Matrix {
 class GraphByMatrix {
   size: number;
   matrix: Matrix;
+
   constructor(size) {
     this.size = size;
     this.matrix = new Matrix({ xSize: size, ySize: size });
