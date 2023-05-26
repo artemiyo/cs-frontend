@@ -1,4 +1,4 @@
-const canvas = document.querySelector("canvas");
+const canvas = document.querySelector("canvas") as HTML;
 const ctx = canvas.getContext("2d");
 const grayscaleButton = document.getElementById("grayscale");
 const inverseButton = document.getElementById("inverse");

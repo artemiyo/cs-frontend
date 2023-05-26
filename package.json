@@ -1,0 +1,21 @@
+{
+    "name": "cs-frontend",
+    "version": "1.0.0",
+    "description": "Computer Science in Frontend",
+    "main": "index.js",
+    "scripts": {
+        "tsc": "tsc -w"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/artemiyo/cs-frontend.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/artemiyo/cs-frontend/issues"
+    },
+    "homepage": "https://github.com/artemiyo/cs-frontend#readme",
+    "devDependencies": {}
+}

@@ -32,7 +32,7 @@ class Matrix {
   }
 
   visualize() {
-    this.process.stdout.write("  | ");
+    process.stdout.write("  | ");
     for (let x = 0; x < this.xSize; x++) {
       process.stdout.write(String.fromCharCode("a".charCodeAt(0) + x));
       process.stdout.write(" | ");
