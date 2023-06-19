@@ -17,5 +17,7 @@
         "url": "https://github.com/artemiyo/cs-frontend/issues"
     },
     "homepage": "https://github.com/artemiyo/cs-frontend#readme",
-    "devDependencies": {}
+    "devDependencies": {
+        "typescript": "^5.1.3"
+    }
 }

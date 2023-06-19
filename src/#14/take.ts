@@ -1,4 +1,4 @@
-export function take<T>(iter: Iterable<T>, limit: number): IterableIterator<T> {
+export function take(iter, limit) {
   const innerIter = iter[Symbol.iterator]();
   let total = 0;
 
