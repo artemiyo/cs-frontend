@@ -8,7 +8,7 @@
     "noImplicitOverride": true,
     "strictNullChecks": true,
     "strictFunctionTypes": true,
-    "strictPropertyInitialization": true,
+    "strictPropertyInitialization": false,
     "declaration": true,
     "module": "CommonJS",
     "moduleResolution": "Node",
